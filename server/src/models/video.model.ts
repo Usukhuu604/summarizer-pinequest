@@ -1,39 +1,50 @@
-import mongoose from 'mongoose';
+import { Schema, model, Model, models } from 'mongoose';
 
-const videoSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    default: 'guest',
-  },
-  title: {
-    type: String,
-    default: 'Untitled video',
-  },
-  sourceType: {
-    type: String,
-    enum: ['upload', 'teams', 'youtube'],
-    required: true,
-  },
-  url: {
-    type: String,
-    required: true,
-  },
-  duration: {
-    type: Number,
-    default: null,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  // Additional fields for future use
-  description: String,
-  thumbnailUrl: String,
-  processingStatus: {
-    type: String,
-    enum: ['pending', 'processing', 'completed', 'error'],
-    default: 'pending',
-  },
-});
+export enum VideoSourceTypeEnum {
+  TEAMS = 'teams',
+  YOUTUBE = 'youtube',
+}
 
-export const VideoModel = mongoose.model('Video', videoSchema);
+export enum VideoProcessingStatusEnum {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  ERROR = 'error',
+}
+
+type VideoSchemaType = {
+  userId: string;
+  title: string;
+  sourceType: VideoSourceTypeEnum;
+  url: string;
+  duration: number | null;
+  createdAt: Date;
+  description?: string;
+  thumbnailUrl?: string;
+  processingStatus: VideoProcessingStatusEnum;
+};
+
+const VideoSchema = new Schema<VideoSchemaType>(
+  {
+    userId: { type: String, default: 'guest', trim: true },
+    title: { type: String, default: 'Untitled video', trim: true },
+    sourceType: {
+      type: String,
+      enum: Object.values(VideoSourceTypeEnum),
+      required: true,
+    },
+    url: { type: String, required: true, trim: true },
+    duration: { type: Number, default: null },
+    createdAt: { type: Date, default: Date.now },
+    description: { type: String, default: '', trim: true },
+    thumbnailUrl: { type: String, default: '', trim: true },
+    processingStatus: {
+      type: String,
+      enum: Object.values(VideoProcessingStatusEnum),
+      default: VideoProcessingStatusEnum.PENDING,
+    },
+  },
+  { timestamps: true },
+);
+
+export const VideoModel: Model<VideoSchemaType> = models['Video'] || model('Video', VideoSchema);
