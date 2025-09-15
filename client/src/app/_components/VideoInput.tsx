@@ -5,14 +5,16 @@ import { VideoProps } from "@/app/_types/video";
 import { ADD_VIDEO_LINK, GET_VIDEOS } from "@/graphql";
 import { Button, Input, Badge } from "@/components/ui/index";
 
+const client = new GraphQLClient(
+  process.env.NEXT_PUBLIC_GRAPHQL_URL || "graphqlUrl-error"
+);
+
 export const VideoInput = () => {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [videos, setVideos] = useState<VideoProps[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  const client = new GraphQLClient(process.env.GRAPHQL_URL || "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +35,6 @@ export const VideoInput = () => {
           `Video link added successfully! Source: ${result.addVideoLink.sourceType}`
         );
         setUrl("");
-        // Refresh the videos list
         await fetchVideos();
       }
     } catch (error) {
@@ -48,13 +49,12 @@ export const VideoInput = () => {
       const result: { getVideos: VideoProps[] } = await client.request(
         GET_VIDEOS
       );
-      setVideos(result.getVideos || []);
+      setVideos(result?.getVideos || []);
     } catch (error) {
       console.error("Error fetching videos:", error);
     }
   };
 
-  // Fetch videos on component mount
   useEffect(() => {
     fetchVideos();
   }, []);
