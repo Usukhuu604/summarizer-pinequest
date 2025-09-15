@@ -1,0 +1,29 @@
+query GetVideos {
+  getVideos {
+    id
+    userId
+    title
+    sourceType
+    url
+    duration
+    description
+    thumbnailUrl
+    processingStatus
+    createdAt
+  }
+}
+
+query GetVideo($id: ID!) {
+  getVideo(id: $id) {
+    id
+    userId
+    title
+    sourceType
+    url
+    duration
+    description
+    thumbnailUrl
+    processingStatus
+    createdAt
+  }
+}

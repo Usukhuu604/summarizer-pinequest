@@ -1,0 +1,14 @@
+mutation AddVideoLink($url: String!) {
+  addVideoLink(url: $url) {
+    id
+    userId
+    title
+    sourceType
+    url
+    duration
+    description
+    thumbnailUrl
+    processingStatus
+    createdAt
+  }
+}

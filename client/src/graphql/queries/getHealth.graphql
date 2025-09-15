@@ -1,0 +1,7 @@
+query GetHealth {
+  health {
+    status
+    message
+    timestamp
+  }
+}
